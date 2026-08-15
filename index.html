@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iSELF Cockpit — Wire</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #1c1b19;
+      --muted: #6b6860;
+      --line: #d9d5cb;
+      --card: #fffcf7;
+      --accent: #2a2a28;
+      --soft: #ebe4d6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .chrome {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .chrome .mark {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .chrome .badge {
+      font-size: 11px;
+      border: 1px dashed var(--muted);
+      padding: 3px 8px;
+      color: var(--muted);
+      border-radius: 999px;
+    }
+    .shell {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 36px 20px 80px;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    h1 {
+      font-size: 32px;
+      font-weight: 500;
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0 0 8px;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 16px;
+      margin: 0 0 28px;
+    }
+    .lede {
+      font-size: 18px;
+      line-height: 1.55;
+      margin: 0 0 18px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px 18px;
+      margin: 0 0 14px;
+    }
+    .card.wire-label::before {
+      content: attr(data-label);
+      display: block;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    ul.clean {
+      margin: 8px 0 0;
+      padding-left: 1.1em;
+      color: var(--ink);
+    }
+    ul.clean li { margin: 6px 0; }
+    .muted { color: var(--muted); }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    button, .btn {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 14px;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    button.secondary, .btn.secondary {
+      background: transparent;
+      color: var(--ink);
+    }
+    button.ghost, .btn.ghost {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--muted);
+    }
+    .video {
+      aspect-ratio: 16 / 9;
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--soft),
+        var(--soft) 12px,
+        #e3dfd3 12px,
+        #e3dfd3 24px
+      );
+      border: 1px dashed var(--muted);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 12px 0 6px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    textarea, select, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fafaf7;
+      color: var(--ink);
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .week-rail {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .week-pill {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 12px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--ink);
+    }
+    .week-pill.active {
+      border-color: var(--ink);
+      background: var(--soft);
+    }
+    .week-pill .n {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+    .nav-foot {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .nav-foot span {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      margin-right: auto;
+    }
+    .choice {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      margin: 0 0 10px;
+      background: var(--card);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      font: inherit;
+      color: inherit;
+    }
+    .choice:hover { border-color: var(--ink); }
+    .choice strong { display: block; margin-bottom: 4px; font-weight: 500; }
+    .note {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="chrome">
+    <div class="mark">iSELF · cockpit</div>
+    <div class="badge">Working wire · utility</div>
+  </div>
+
+  <div class="shell">
+
+    <section id="orient" class="screen active">
+      <h1>iSELF</h1>
+      <p class="sub">A utility for navigating participation within experience.</p>
+
+      <p class="lede">The lights are on. You can look around. Nothing here asks you to believe, improve, or become someone else.</p>
+
+      <div class="card wire-label" data-label="The utility">
+        <p>Imagination Technology offers instruments you can test. Your lived experience is the laboratory. iSELF is the cockpit: a resource that stays on, the way a grid stays on.</p>
+        <p class="muted" style="margin-bottom:0">A utility does not explain the resource. It gives reliable access to something already fundamental. You remain the investigator and architect.</p>
+      </div>
+
+      <div class="card wire-label" data-label="This is not">
+        <ul class="clean">
+          <li>Therapy, coaching, or self-help</li>
+          <li>A course that installs a belief system</li>
+          <li>An upgrade The Passion Company performs on you</li>
+          <li>A funnel into a guru, a program, or a community</li>
+        </ul>
+      </div>
+
+      <div class="card wire-label" data-label="If you enter">
+        <ul class="clean">
+          <li>Three instruments to test, one at a time: Day One, Blank Slate, Quantum Self</li>
+          <li>The cockpit stays on after that. You keep experimenting toward Conscious OS, or you don’t</li>
+          <li>Tech support is a helpdesk: how the environment works, how to run an experiment. Not what your life means</li>
+        </ul>
+      </div>
+
+      <div class="row">
+        <button type="button" onclick="go('enter')">Continue to the door</button>
+        <button type="button" class="ghost" onclick="go('support')">Tech support</button>
+      </div>
+    </section>
+
+    <section id="enter" class="screen">
+      <h1>The door</h1>
+      <p class="sub">One exchange. Then the resource stays on.</p>
+
+      <p class="lede">Enter once. You are not buying a fix, a new identity, or our authority. You are honoring the studio so the cockpit can stay available.</p>
+
+      <div class="card wire-label" data-label="What you enter">
+        <ul class="clean">
+          <li>The Imagination Technology lab: three theories as instruments to test in your week</li>
+          <li>The cockpit as an ongoing resource. It does not turn off after week three</li>
+          <li>Tech support: a ticket desk for the environment and for “how do I test this”</li>
+        </ul>
+      </div>
+
+      <div class="card wire-label" data-label="What you are not buying">
+        <ul class="clean">
+          <li>Healing, transformation, or a scored upgrade from Survival OS</li>
+          <li>Someone to author your participation</li>
+          <li>Access to a founder as a higher tier</li>
+        </ul>
+      </div>
+
+      <div class="card wire-label" data-label="The exchange">
+        <p style="margin:0">Pay once at this door. No countdown. No bonus if you hesitate. After you enter you are a participant, not a customer being processed. You can step back later. Nothing follows you.</p>
+      </div>
+
+      <div class="row">
+        <button type="button" onclick="go('home')">Enter</button>
+        <button type="button" class="secondary" onclick="go('orient')">Not now</button>
+      </div>
+      <p class="note">Wire: no price shown. The door is the posture, not a checkout.</p>
+    </section>
+
+    <section id="home" class="screen">
+      <h1>Cockpit</h1>
+      <p class="sub">The resource is on. Imagination Technology lab, then it stays available.</p>
+
+      <div class="week-rail">
+        <button type="button" class="week-pill active" onclick="openWeek(1)">
+          <span class="n">Week 1</span>
+          Day One Theory<br /><span class="muted">3D · Body</span>
+        </button>
+        <button type="button" class="week-pill" onclick="openWeek(2)">
+          <span class="n">Week 2</span>
+          Blank Slate Theory<br /><span class="muted">4D · Mind</span>
+        </button>
+        <button type="button" class="week-pill" onclick="openWeek(3)">
+          <span class="n">Week 3</span>
+          Quantum Self Theory<br /><span class="muted">5D · Imagination</span>
+        </button>
+      </div>
+
+      <div class="card wire-label" data-label="Current instrument">
+        <h2 id="home-title">Day One Theory</h2>
+        <p class="muted" id="home-hyp" style="margin:0">Hypothesis: The body does not exist in time.</p>
+        <p class="note">Test it in the week. Do not adopt it. Videos treated as done.</p>
+      </div>
+
+      <div class="row">
+        <button type="button" onclick="go('instrument')">Open this week’s instrument</button>
+        <button type="button" class="secondary" onclick="go('log')">Experiment log</button>
+        <button type="button" class="secondary" onclick="go('threshold')">Threshold</button>
+      </div>
+
+      <div class="nav-foot">
+        <span>On</span>
+        <button type="button" class="ghost" onclick="go('orient')">Orientation</button>
+        <button type="button" class="ghost" onclick="go('beyond')">Cockpit stays on</button>
+        <button type="button" class="ghost" onclick="go('support')">Support</button>
+      </div>
+    </section>
+
+    <section id="instrument" class="screen">
+      <h1 id="inst-title">Day One Theory</h1>
+      <p class="sub" id="inst-dim">3D · Body · Week 1 instrument</p>
+
+      <div class="video">Video instrument · placeholder</div>
+
+      <div class="card wire-label" data-label="Hypothesis">
+        <p id="inst-hyp" style="margin:0">The body does not exist in time.</p>
+      </div>
+
+      <div class="card wire-label" data-label="This week’s experiment">
+        <p id="inst-exp" style="margin:0">Return attention to direct sensory participation. Notice the distinction between bodily experience and mental time-processing. Test. Do not adopt.</p>
+      </div>
+
+      <div class="card wire-label" data-label="Not a claim">
+        <ul class="clean">
+          <li>Not a belief to accept</li>
+          <li>Not a method that heals or improves you</li>
+          <li>Useful if it increases navigability. Discardable if not</li>
+        </ul>
+      </div>
+
+      <div class="row">
+        <button type="button" onclick="go('log')">Log what you noticed</button>
+        <button type="button" class="secondary" onclick="go('home')">Back to cockpit</button>
+      </div>
+
+      <div class="nav-foot">
+        <span>Instrument</span>
+        <button type="button" class="ghost" onclick="go('support')">How do I test this?</button>
+      </div>
+    </section>
+
+    <section id="log" class="screen">
+      <h1>Experiment log</h1>
+      <p class="sub">Lab notebook. Optional. Reversible. Not a social feed.</p>
+
+      <div class="card wire-label" data-label="Entry">
+        <label for="log-theory">Theory under test</label>
+        <select id="log-theory">
+          <option>Day One Theory (3D)</option>
+          <option>Blank Slate Theory (4D)</option>
+          <option>Quantum Self Theory (5D)</option>
+        </select>
+
+        <label for="log-tested">What I tested</label>
+        <textarea id="log-tested" placeholder="The posture or distinction I tried…"></textarea>
+
+        <label for="log-noticed">What I noticed</label>
+        <textarea id="log-noticed" placeholder="Observation: “I noticed…” not “I fixed…”"></textarea>
+
+        <p class="note">Wire only. Entries stay in this browser.</p>
+      </div>
+
+      <div class="row">
+        <button type="button" onclick="saveLog()">Save entry (local)</button>
+        <button type="button" class="secondary" onclick="go('instrument')">Back to instrument</button>
+        <button type="button" class="secondary" onclick="go('home')">Cockpit</button>
+      </div>
+
+      <div id="log-list" class="card wire-label" data-label="This session" style="display:none;margin-top:14px"></div>
+
+      <div class="nav-foot">
+        <span>Log</span>
+        <button type="button" class="ghost" onclick="go('threshold')">Threshold</button>
+      </div>
+    </section>
+
+    <section id="threshold" class="screen">
+      <h1>Threshold</h1>
+      <p class="sub">After the lab. The cockpit is still on. You choose how to participate.</p>
+
+      <div class="card wire-label" data-label="Context">
+        <p style="margin:0">Experimentation may reorganize experience from Survival OS patterning toward Conscious OS. TPC does not install Conscious OS. You remain the architect. You already entered. This is not another payment.</p>
+      </div>
+
+      <button type="button" class="choice" onclick="pickChoice('continue')">
+        <strong>Keep the cockpit on</strong>
+        <span class="muted">Continue experimenting and consciously engineering. Tech support stays available.</span>
+      </button>
+
+      <button type="button" class="choice" onclick="pickChoice('pause')">
+        <strong>Stay with the instruments</strong>
+        <span class="muted">Return to any theory. No pressure. Voluntary.</span>
+      </button>
+
+      <button type="button" class="choice" onclick="pickChoice('exit')">
+        <strong>Step back</strong>
+        <span class="muted">Leave. No chase. The exchange already happened. Exit integrity.</span>
+      </button>
+
+      <p id="choice-echo" class="note" style="display:none"></p>
+
+      <div class="row">
+        <button type="button" class="secondary" onclick="go('beyond')">Cockpit stays on</button>
+        <button type="button" class="ghost" onclick="go('home')">Lab</button>
+      </div>
+    </section>
+
+    <section id="beyond" class="screen">
+      <h1>Cockpit stays on</h1>
+      <p class="sub">Ongoing resource. Conscious OS participation, if you choose it.</p>
+
+      <div class="card wire-label" data-label="The utility, after the lab">
+        <p>The instruments remain. You run experiments you choose: observation, mobility, repetition. TPC does not advance you through a curriculum. Wayfinding keeps you oriented: Conscious OS rather than Survival OS. Engineering, not improving. Experimenting, not believing. Practicing, not performing. Remembering what’s already usable.</p>
+        <ul class="clean">
+          <li>Revisit any theory instrument</li>
+          <li>Log in your own framing</li>
+          <li>Open a helpdesk ticket when you’re stuck on how to test, or when something breaks</li>
+        </ul>
+      </div>
+
+      <div class="row">
+        <button type="button" onclick="go('log')">Experiment log</button>
+        <button type="button" class="secondary" onclick="go('home')">Instruments</button>
+        <button type="button" class="secondary" onclick="go('support')">Tech support</button>
+      </div>
+    </section>
+
+    <section id="support" class="screen">
+      <h1>Tech support</h1>
+      <p class="sub">A helpdesk. Boring on purpose. Wayfinding, not a session.</p>
+
+      <div class="card wire-label" data-label="In scope">
+        <ul class="clean">
+          <li>Access, playback, navigation, the log</li>
+          <li>How to test an instrument (example: “I’m confused how to experiment with Day One”)</li>
+          <li>Orientation back to Conscious OS, engineering, experimenting, practicing, remembering</li>
+        </ul>
+      </div>
+
+      <div class="card wire-label" data-label="Out of scope">
+        <ul class="clean">
+          <li>What your experience means</li>
+          <li>Coaching, diagnosis, or the next belief to adopt</li>
+          <li>Someone else authoring your participation</li>
+        </ul>
+      </div>
+
+      <div class="card wire-label" data-label="Ticket">
+        <label for="sup-q">What’s unclear or broken?</label>
+        <textarea id="sup-q" placeholder="e.g. How do I actually test Day One this week?  or  Week 2 video won’t play."></textarea>
+        <div class="row">
+          <button type="button" onclick="alert('Wire only. A first reply would wayfind: hypothesis, what to test, what not to claim. No ticket sent.')">Submit ticket (demo)</button>
+        </div>
+        <p class="note">Same desk for the environment and for how to run the experiment. AI can draft the first reply. A person only sees what’s actually stuck.</p>
+      </div>
+
+      <div class="nav-foot">
+        <span>Helpdesk</span>
+        <button type="button" class="ghost" onclick="go('home')">Cockpit</button>
+        <button type="button" class="ghost" onclick="go('orient')">Orientation</button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const weeks = {
+      1: {
+        title: "Day One Theory",
+        dim: "3D · Body · Week 1 instrument",
+        hyp: "The body does not exist in time.",
+        exp: "Return attention to direct sensory participation. Notice the distinction between bodily experience and mental time-processing. Test. Do not adopt."
+      },
+      2: {
+        title: "Blank Slate Theory",
+        dim: "4D · Mind · Week 2 instrument",
+        hyp: "The mind’s natural state is empty.",
+        exp: "Observe thoughts as temporary activity. Distinguish thoughts occurring, the space between thoughts, and the awareness noticing them. Test. Do not adopt."
+      },
+      3: {
+        title: "Quantum Self Theory",
+        dim: "5D · Imagination · Week 3 instrument",
+        hyp: "The imagination in its purest state has infinite potential.",
+        exp: "Use imagination as perspective mobility. Notice how shifting interpretive lenses reorganizes experience. Test. Do not adopt."
+      }
+    };
+    let currentWeek = 1;
+
+    function go(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    function openWeek(n) {
+      currentWeek = n;
+      const w = weeks[n];
+      document.querySelectorAll(".week-pill").forEach((el, i) => {
+        el.classList.toggle("active", i === n - 1);
+      });
+      document.getElementById("home-title").textContent = w.title;
+      document.getElementById("home-hyp").textContent = "Hypothesis: " + w.hyp;
+      document.getElementById("inst-title").textContent = w.title;
+      document.getElementById("inst-dim").textContent = w.dim;
+      document.getElementById("inst-hyp").textContent = w.hyp;
+      document.getElementById("inst-exp").textContent = w.exp;
+      const sel = document.getElementById("log-theory");
+      if (sel) sel.selectedIndex = n - 1;
+      go("instrument");
+    }
+
+    function saveLog() {
+      const theory = document.getElementById("log-theory").value;
+      const tested = document.getElementById("log-tested").value.trim();
+      const noticed = document.getElementById("log-noticed").value.trim();
+      const list = document.getElementById("log-list");
+      list.style.display = "block";
+      const block = document.createElement("div");
+      block.style.marginBottom = "12px";
+      block.innerHTML = "<strong>" + theory + "</strong><br><span class='muted'>Tested:</span> " +
+        (tested || "—") + "<br><span class='muted'>Noticed:</span> " + (noticed || "—");
+      list.appendChild(block);
+      document.getElementById("log-tested").value = "";
+      document.getElementById("log-noticed").value = "";
+    }
+
+    function pickChoice(kind) {
+      const echo = document.getElementById("choice-echo");
+      const map = {
+        continue: "Cockpit stays on. Keep experimenting.",
+        pause: "Stay with the instruments. No chase.",
+        exit: "Step back. Exit integrity. Nothing follows you."
+      };
+      echo.style.display = "block";
+      echo.textContent = map[kind];
+      if (kind === "continue") setTimeout(() => go("beyond"), 400);
+    }
+  </script>
+</body>
+</html>
