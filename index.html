@@ -263,7 +263,7 @@
       <div class="card wire-label" data-label="If you enter">
         <ul class="clean">
           <li>Three instruments to test, one at a time: Day One, Blank Slate, Quantum Self</li>
-          <li>The cockpit stays on after that. You keep experimenting toward Conscious OS, or you don’t</li>
+          <li>After the three, you can name your own experiments. The cockpit stays on</li>
           <li>Tech support is a helpdesk: how the environment works, how to run an experiment. Not what your life means</li>
         </ul>
       </div>
@@ -283,7 +283,7 @@
       <div class="card wire-label" data-label="What you enter">
         <ul class="clean">
           <li>The Imagination Technology lab: three theories as instruments to test in your week</li>
-          <li>The cockpit as an ongoing resource. It does not turn off after week three</li>
+          <li>After the three, you can name your own experiments. The cockpit stays on</li>
           <li>Tech support: a ticket desk for the environment and for “how do I test this”</li>
         </ul>
       </div>
@@ -325,6 +325,7 @@
           Quantum Self Theory<br /><span class="muted">5D · Imagination</span>
         </button>
       </div>
+      <p class="note" style="margin-top:0;margin-bottom:18px">This rail ends at the threshold. Then the log can hold experiments you name.</p>
 
       <div class="card wire-label" data-label="Current instrument">
         <h2 id="home-title">Day One Theory</h2>
@@ -334,14 +335,14 @@
 
       <div class="row">
         <button type="button" onclick="go('instrument')">Open this week’s instrument</button>
-        <button type="button" class="secondary" onclick="go('log')">Experiment log</button>
+        <button type="button" class="secondary" onclick="openLog()">Experiment log</button>
         <button type="button" class="secondary" onclick="go('threshold')">Threshold</button>
       </div>
 
       <div class="nav-foot">
         <span>On</span>
         <button type="button" class="ghost" onclick="go('orient')">Orientation</button>
-        <button type="button" class="ghost" onclick="go('beyond')">Cockpit stays on</button>
+        <button type="button" class="ghost" onclick="go('beyond')">Your experiments</button>
         <button type="button" class="ghost" onclick="go('support')">Support</button>
       </div>
     </section>
@@ -369,7 +370,7 @@
       </div>
 
       <div class="row">
-        <button type="button" onclick="go('log')">Log what you noticed</button>
+        <button type="button" onclick="openLogFromInstrument()">Log what you noticed</button>
         <button type="button" class="secondary" onclick="go('home')">Back to cockpit</button>
       </div>
 
@@ -384,12 +385,13 @@
       <p class="sub">Lab notebook. Optional. Reversible. Not a social feed.</p>
 
       <div class="card wire-label" data-label="Entry">
-        <label for="log-theory">Theory under test</label>
-        <select id="log-theory">
-          <option>Day One Theory (3D)</option>
-          <option>Blank Slate Theory (4D)</option>
-          <option>Quantum Self Theory (5D)</option>
-        </select>
+        <label for="log-experiment">Experiment</label>
+        <select id="log-experiment" onchange="onExperimentChange()"></select>
+
+        <div id="new-exp-wrap" style="display:none">
+          <label for="log-new-name">Name this experiment</label>
+          <input type="text" id="log-new-name" placeholder="e.g. Anger" />
+        </div>
 
         <label for="log-tested">What I tested</label>
         <textarea id="log-tested" placeholder="The posture or distinction I tried…"></textarea>
@@ -397,7 +399,7 @@
         <label for="log-noticed">What I noticed</label>
         <textarea id="log-noticed" placeholder="Observation: “I noticed…” not “I fixed…”"></textarea>
 
-        <p class="note">Wire only. Entries stay in this browser.</p>
+        <p class="note">New experiment appears after the threshold. Same form either way.</p>
       </div>
 
       <div class="row">
@@ -406,62 +408,73 @@
         <button type="button" class="secondary" onclick="go('home')">Cockpit</button>
       </div>
 
-      <div id="log-list" class="card wire-label" data-label="This session" style="display:none;margin-top:14px"></div>
+      <div id="log-list" class="card wire-label" data-label="This experiment" style="display:none;margin-top:14px"></div>
 
       <div class="nav-foot">
         <span>Log</span>
         <button type="button" class="ghost" onclick="go('threshold')">Threshold</button>
+        <button type="button" class="ghost" onclick="go('beyond')">Your experiments</button>
       </div>
     </section>
 
     <section id="threshold" class="screen">
       <h1>Threshold</h1>
-      <p class="sub">After the lab. The cockpit is still on. You choose how to participate.</p>
+      <p class="sub">The given lab ends. The cockpit stays. You start engineering.</p>
 
       <div class="card wire-label" data-label="Context">
-        <p style="margin:0">Experimentation may reorganize experience from Survival OS patterning toward Conscious OS. TPC does not install Conscious OS. You remain the architect. You already entered. This is not another payment.</p>
+        <p style="margin:0">You tested three given theories. TPC does not write week 4. You remain the architect. This is not another payment. The lights stay on.</p>
       </div>
 
-      <button type="button" class="choice" onclick="pickChoice('continue')">
-        <strong>Keep the cockpit on</strong>
-        <span class="muted">Continue experimenting and consciously engineering. Tech support stays available.</span>
+      <button type="button" class="choice" onclick="pickChoice('name')">
+        <strong>Name my own experiments</strong>
+        <span class="muted">Conscious Engineering. Same log. You title the experiment (Anger, or anything).</span>
       </button>
 
-      <button type="button" class="choice" onclick="pickChoice('pause')">
-        <strong>Stay with the instruments</strong>
-        <span class="muted">Return to any theory. No pressure. Voluntary.</span>
+      <button type="button" class="choice" onclick="pickChoice('stay')">
+        <strong>Stay with the three instruments</strong>
+        <span class="muted">Revisit Day One, Blank Slate, Quantum Self. No pressure.</span>
       </button>
 
       <button type="button" class="choice" onclick="pickChoice('exit')">
         <strong>Step back</strong>
-        <span class="muted">Leave. No chase. The exchange already happened. Exit integrity.</span>
+        <span class="muted">Leave. No chase. Exit integrity.</span>
       </button>
 
       <p id="choice-echo" class="note" style="display:none"></p>
+      <p class="note">Pay already happened at the door.</p>
 
       <div class="row">
-        <button type="button" class="secondary" onclick="go('beyond')">Cockpit stays on</button>
         <button type="button" class="ghost" onclick="go('home')">Lab</button>
       </div>
     </section>
 
     <section id="beyond" class="screen">
-      <h1>Cockpit stays on</h1>
-      <p class="sub">Ongoing resource. Conscious OS participation, if you choose it.</p>
+      <h1>Your experiments</h1>
+      <p class="sub">The week rail ended. The instruments are still on the shelf.</p>
 
-      <div class="card wire-label" data-label="The utility, after the lab">
-        <p>The instruments remain. You run experiments you choose: observation, mobility, repetition. TPC does not advance you through a curriculum. Wayfinding keeps you oriented: Conscious OS rather than Survival OS. Engineering, not improving. Experimenting, not believing. Practicing, not performing. Remembering what’s already usable.</p>
-        <ul class="clean">
-          <li>Revisit any theory instrument</li>
-          <li>Log in your own framing</li>
-          <li>Open a helpdesk ticket when you’re stuck on how to test, or when something breaks</li>
-        </ul>
+      <div class="card wire-label" data-label="Experiment list">
+        <div id="exp-list"></div>
+        <div class="row" style="margin-top:12px">
+          <button type="button" onclick="openLogNew()">New experiment</button>
+        </div>
+      </div>
+
+      <div class="card wire-label" data-label="Instruments on the shelf">
+        <p class="muted" style="margin-top:0">Three ways back. Same instruments.</p>
+        <div class="row" style="margin-top:8px">
+          <button type="button" class="secondary" onclick="openWeek(1)">Day One</button>
+          <button type="button" class="secondary" onclick="openWeek(2)">Blank Slate</button>
+          <button type="button" class="secondary" onclick="openWeek(3)">Quantum Self</button>
+        </div>
+      </div>
+
+      <div class="card wire-label" data-label="Posture">
+        <p style="margin:0">Engineering, not improving. Experimenting, not believing. Notice, not heal. No score.</p>
       </div>
 
       <div class="row">
-        <button type="button" onclick="go('log')">Experiment log</button>
-        <button type="button" class="secondary" onclick="go('home')">Instruments</button>
         <button type="button" class="secondary" onclick="go('support')">Tech support</button>
+        <button type="button" class="ghost" onclick="go('home')">Lab</button>
       </div>
     </section>
 
@@ -509,27 +522,75 @@
         title: "Day One Theory",
         dim: "3D · Body · Week 1 instrument",
         hyp: "The body does not exist in time.",
-        exp: "Return attention to direct sensory participation. Notice the distinction between bodily experience and mental time-processing. Test. Do not adopt."
+        exp: "Return attention to direct sensory participation. Notice the distinction between bodily experience and mental time-processing. Test. Do not adopt.",
+        logName: "Day One Theory (3D)"
       },
       2: {
         title: "Blank Slate Theory",
         dim: "4D · Mind · Week 2 instrument",
         hyp: "The mind’s natural state is empty.",
-        exp: "Observe thoughts as temporary activity. Distinguish thoughts occurring, the space between thoughts, and the awareness noticing them. Test. Do not adopt."
+        exp: "Observe thoughts as temporary activity. Distinguish thoughts occurring, the space between thoughts, and the awareness noticing them. Test. Do not adopt.",
+        logName: "Blank Slate Theory (4D)"
       },
       3: {
         title: "Quantum Self Theory",
         dim: "5D · Imagination · Week 3 instrument",
         hyp: "The imagination in its purest state has infinite potential.",
-        exp: "Use imagination as perspective mobility. Notice how shifting interpretive lenses reorganizes experience. Test. Do not adopt."
+        exp: "Use imagination as perspective mobility. Notice how shifting interpretive lenses reorganizes experience. Test. Do not adopt.",
+        logName: "Quantum Self Theory (5D)"
       }
     };
+
+    const GIVEN = [
+      "Day One Theory (3D)",
+      "Blank Slate Theory (4D)",
+      "Quantum Self Theory (5D)"
+    ];
+    const NEW_VALUE = "__new__";
+
     let currentWeek = 1;
+    let crossedThreshold = false;
+    let customExperiments = [];
+    let entries = [
+      {
+        experiment: "Day One Theory (3D)",
+        tested: "Attention on the body when a plan about later started.",
+        noticed: "The plan kept talking. The body was still here.",
+        wire: true
+      },
+      {
+        experiment: "Day One Theory (3D)",
+        tested: "Walking without adding a story to the walk.",
+        noticed: "The story returned. I noticed it return.",
+        wire: true
+      }
+    ];
+
+    function esc(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function allExperiments() {
+      return GIVEN.concat(customExperiments);
+    }
 
     function go(id) {
       document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
       window.scrollTo(0, 0);
+      if (id === "beyond") renderBeyondList();
+      if (id === "log") {
+        const sel = document.getElementById("log-experiment");
+        if (sel && !sel.options.length) rebuildSelect(weeks[currentWeek].logName);
+        else {
+          onExperimentChange();
+          renderHistory();
+        }
+      }
     }
 
     function openWeek(n) {
@@ -544,37 +605,136 @@
       document.getElementById("inst-dim").textContent = w.dim;
       document.getElementById("inst-hyp").textContent = w.hyp;
       document.getElementById("inst-exp").textContent = w.exp;
-      const sel = document.getElementById("log-theory");
-      if (sel) sel.selectedIndex = n - 1;
       go("instrument");
     }
 
+    function rebuildSelect(selectedName) {
+      const sel = document.getElementById("log-experiment");
+      sel.innerHTML = "";
+      allExperiments().forEach(function (name) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
+      if (crossedThreshold) {
+        const opt = document.createElement("option");
+        opt.value = NEW_VALUE;
+        opt.textContent = "New experiment…";
+        sel.appendChild(opt);
+      }
+      if (selectedName && Array.prototype.some.call(sel.options, function (o) { return o.value === selectedName; })) {
+        sel.value = selectedName;
+      }
+      onExperimentChange();
+      renderHistory();
+    }
+
+    function onExperimentChange() {
+      const sel = document.getElementById("log-experiment");
+      const wrap = document.getElementById("new-exp-wrap");
+      wrap.style.display = (sel.value === NEW_VALUE) ? "block" : "none";
+      renderHistory();
+    }
+
+    function openLog(name) {
+      rebuildSelect(name || weeks[currentWeek].logName);
+      go("log");
+    }
+
+    function openLogFromInstrument() {
+      openLog(weeks[currentWeek].logName);
+    }
+
+    function openLogNew() {
+      crossedThreshold = true;
+      rebuildSelect(NEW_VALUE);
+      go("log");
+    }
+
     function saveLog() {
-      const theory = document.getElementById("log-theory").value;
+      const sel = document.getElementById("log-experiment");
+      let name = sel.value;
+      if (name === NEW_VALUE) {
+        name = document.getElementById("log-new-name").value.trim();
+        if (!name) {
+          alert("Name the experiment first. e.g. Anger");
+          return;
+        }
+        if (GIVEN.indexOf(name) === -1 && customExperiments.indexOf(name) === -1) {
+          customExperiments.push(name);
+        }
+        document.getElementById("log-new-name").value = "";
+      }
       const tested = document.getElementById("log-tested").value.trim();
       const noticed = document.getElementById("log-noticed").value.trim();
-      const list = document.getElementById("log-list");
-      list.style.display = "block";
-      const block = document.createElement("div");
-      block.style.marginBottom = "12px";
-      block.innerHTML = "<strong>" + theory + "</strong><br><span class='muted'>Tested:</span> " +
-        (tested || "—") + "<br><span class='muted'>Noticed:</span> " + (noticed || "—");
-      list.appendChild(block);
+      entries.push({ experiment: name, tested: tested, noticed: noticed, wire: false });
       document.getElementById("log-tested").value = "";
       document.getElementById("log-noticed").value = "";
+      rebuildSelect(name);
+      renderBeyondList();
+    }
+
+    function renderHistory() {
+      const sel = document.getElementById("log-experiment");
+      const list = document.getElementById("log-list");
+      const name = sel.value;
+      if (!name || name === NEW_VALUE) {
+        list.style.display = "none";
+        list.innerHTML = "";
+        return;
+      }
+      const mine = entries.filter(function (e) { return e.experiment === name; });
+      if (!mine.length) {
+        list.style.display = "none";
+        list.innerHTML = "";
+        return;
+      }
+      list.style.display = "block";
+      list.setAttribute("data-label", "This experiment");
+      list.innerHTML = mine.map(function (e) {
+        const tag = e.wire
+          ? "<p class='note'>Wire example — not real user data.</p>"
+          : "";
+        return "<div style='margin-bottom:12px'><span class='muted'>Tested:</span> " +
+          esc(e.tested || "—") + "<br><span class='muted'>Noticed:</span> " +
+          esc(e.noticed || "—") + tag + "</div>";
+      }).join("");
+    }
+
+    function renderBeyondList() {
+      const host = document.getElementById("exp-list");
+      if (!host) return;
+      host.innerHTML = allExperiments().map(function (name) {
+        return "<button type='button' class='choice' onclick='openLog(" +
+          JSON.stringify(name) + ")'><strong>" + esc(name) + "</strong>" +
+          "<span class='muted'>Open the log with this experiment selected.</span></button>";
+      }).join("");
     }
 
     function pickChoice(kind) {
       const echo = document.getElementById("choice-echo");
       const map = {
-        continue: "Cockpit stays on. Keep experimenting.",
-        pause: "Stay with the instruments. No chase.",
+        name: "Same log. You title the experiment. New experiment is unlocked.",
+        stay: "Stay with the three instruments. No pressure.",
         exit: "Step back. Exit integrity. Nothing follows you."
       };
       echo.style.display = "block";
       echo.textContent = map[kind];
-      if (kind === "continue") setTimeout(() => go("beyond"), 400);
+      if (kind === "name") {
+        crossedThreshold = true;
+        rebuildSelect(NEW_VALUE);
+        renderBeyondList();
+        setTimeout(function () { go("beyond"); }, 350);
+      } else if (kind === "stay") {
+        setTimeout(function () { go("home"); }, 350);
+      } else if (kind === "exit") {
+        setTimeout(function () { go("orient"); }, 350);
+      }
     }
+
+    rebuildSelect(GIVEN[0]);
+    renderBeyondList();
   </script>
 </body>
 </html>
