@@ -1,2 +1,5 @@
-# iself-cockpit-wire-preview
-Public preview of the iSELF cockpit working wire. Source of truth is the private iself-cockpit-wire repo.
+# iSELF cockpit wire (preview)
+
+Working click-through wire for The Passion Company. Not a finished product.
+
+Private source: `jlasman/iself-cockpit-wire`.
